@@ -2,9 +2,7 @@ package com.sawacorp.mytime.render
 
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Canvas
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.PaintingStyle
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.sawacorp.mytime.model.PieChartData
 
@@ -54,6 +52,7 @@ class SimpleSliceDrawer(private val sliceThickness: Float = 25F) : ISliceDrawer 
             paint = sectorPaint.apply {
                 color = slice.color
                 strokeWidth = sliceThickness
+                strokeCap = StrokeCap.Round
             },
             startAngle = startAngle,
             sweepAngle = sweepAngle,
