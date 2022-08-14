@@ -1,15 +1,21 @@
 package com.sawacorp.mytime.view.mainScreen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Card
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -24,9 +30,15 @@ import com.sawacorp.mytime.ui.theme.itemStyleText
 import com.sawacorp.mytime.ui.theme.itemStyleTime
 import com.sawacorp.mytime.ui.theme.mainStyle
 import com.sawacorp.mytime.view.PieChart
+import com.sawacorp.mytime.view.PopUpPeriod
 
 @Composable
 fun MainScreen() {
+
+    var showPopUp by remember {
+        mutableStateOf(false)
+    }
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(
             modifier = Modifier
@@ -83,7 +95,12 @@ fun MainScreen() {
                     style = mainStyle
                 )
                 Spacer(modifier = Modifier.height(18.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable {
+                        showPopUp = !showPopUp
+                    }
+                ) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_calendar),
                         contentDescription = "add"
@@ -179,5 +196,13 @@ fun MainScreen() {
                 }
             }
         }
+    }
+
+    AnimatedVisibility(
+        visible = showPopUp,
+        enter = expandVertically(),
+        exit = shrinkVertically()
+    ) {
+        PopUpPeriod() { showPopUp = !showPopUp }
     }
 }

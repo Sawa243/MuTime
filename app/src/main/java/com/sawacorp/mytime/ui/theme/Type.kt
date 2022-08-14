@@ -73,3 +73,14 @@ val itemStyleTime = TextStyle(
     fontWeight = FontWeight(500),
     letterSpacing = 0.1.sp
 )
+
+val itemStylePeriod = TextStyle(
+    fontSize = 16.sp,
+    color = Grey90,
+    lineHeight = 24.sp,
+    fontFamily = FontFamily(Font(R.font.gotham_medium)),
+    textAlign = TextAlign.Center,
+    fontStyle = FontStyle.Normal,
+    fontWeight = FontWeight(400),
+    letterSpacing = 0.5.sp
+)
