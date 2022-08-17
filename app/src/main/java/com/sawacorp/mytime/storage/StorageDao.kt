@@ -6,7 +6,7 @@ import com.sawacorp.mytime.model.PieChartData
 
 @Dao
 interface StorageDao {
-    @Query("SELECT * FROM storage_entity order by value asc")
+    @Query("SELECT * FROM storage_entity order by name asc")
     fun allStorageEntity(): LiveData<List<PieChartData.Slice>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

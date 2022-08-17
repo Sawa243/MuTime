@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -51,10 +52,10 @@ fun MainScreen() {
             PieChart(
                 pieChartData = PieChartData(
                     slices = listOf(
-                        PieChartData.Slice(25F, Color.Red, "Color.Red"),
-                        PieChartData.Slice(45F, Color.Green, "Color.Green"),
-                        PieChartData.Slice(20F, Color.Blue, "Color.Blue"),
-                        PieChartData.Slice(20F, Color.Yellow, "Color.Yellow"),
+                        PieChartData.Slice(25F, Color.Red.toArgb(), "Color.Red"),
+                        PieChartData.Slice(45F, Color.Green.toArgb(), "Color.Green"),
+                        PieChartData.Slice(20F, Color.Blue.toArgb(), "Color.Blue"),
+                        PieChartData.Slice(20F, Color.Yellow.toArgb(), "Color.Yellow"),
                     )
                 )
             )
@@ -141,10 +142,10 @@ fun MainScreen() {
                     .padding(top = 10.dp)
             ) {
                 listOf(
-                    PieChartData.Slice(25F, Color.Red, "Прогулка"),
-                    PieChartData.Slice(45F, Color.Green, "Работа"),
-                    PieChartData.Slice(20F, Color.Blue, "Забота"),
-                    PieChartData.Slice(20F, Color.Yellow, "Дружба"),
+                    PieChartData.Slice(25F, Color.Red.toArgb(), "Прогулка"),
+                    PieChartData.Slice(45F, Color.Green.toArgb(), "Работа"),
+                    PieChartData.Slice(20F, Color.Blue.toArgb(), "Забота"),
+                    PieChartData.Slice(20F, Color.Yellow.toArgb(), "Дружба"),
                 ).forEach { item ->
                     item {
                         Row(
@@ -162,11 +163,11 @@ fun MainScreen() {
                                 Spacer(
                                     modifier = Modifier
                                         .size(width = 5.dp, height = 40.dp)
-                                        .background(item.color)
+                                        .background(Color(item.color))
                                 )
                                 Text(
                                     modifier = Modifier.padding(start = 10.dp),
-                                    text = item.name_task,
+                                    text = item.name,
                                     style = itemStyleText
                                 )
                             }
@@ -215,6 +216,6 @@ fun MainScreen() {
         enter = expandVertically(),
         exit = shrinkVertically()
     ) {
-        NewTaskElement()
+        NewTaskElement() { showNewTaskElement = !showNewTaskElement }
     }
 }

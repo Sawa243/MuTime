@@ -1,6 +1,5 @@
 package com.sawacorp.mytime.model
 
-import androidx.compose.ui.graphics.Color
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -11,5 +10,10 @@ data class PieChartData(val slices: List<Slice>) {
         }
 
     @Entity(tableName = "storage_entity")
-    data class Slice(@PrimaryKey val value: Float, val color: Color, val name: String)
+    data class Slice(
+        val value: Float,
+        val color: Int,
+        @PrimaryKey
+        val name: String
+    )
 }

@@ -50,7 +50,7 @@ class SimpleSliceDrawer(private val sliceThickness: Float = 25F) : ISliceDrawer 
         canvas.drawArc(
             rect = drawableArea,
             paint = sectorPaint.apply {
-                color = slice.color
+                color = Color(slice.color)
                 strokeWidth = sliceThickness
                 strokeCap = StrokeCap.Round
             },
