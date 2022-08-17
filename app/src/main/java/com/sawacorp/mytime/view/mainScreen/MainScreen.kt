@@ -27,6 +27,7 @@ import com.sawacorp.mytime.ui.theme.Blue80
 import com.sawacorp.mytime.ui.theme.itemStyleText
 import com.sawacorp.mytime.ui.theme.itemStyleTime
 import com.sawacorp.mytime.ui.theme.mainStyle
+import com.sawacorp.mytime.view.NewTaskElement
 import com.sawacorp.mytime.view.PieChart
 import com.sawacorp.mytime.view.PopUpPeriod
 
@@ -34,6 +35,9 @@ import com.sawacorp.mytime.view.PopUpPeriod
 fun MainScreen() {
 
     var showPopUp by remember {
+        mutableStateOf(false)
+    }
+    var showNewTaskElement by remember {
         mutableStateOf(false)
     }
 
@@ -116,7 +120,9 @@ fun MainScreen() {
             }
             Image(
                 painter = painterResource(id = R.drawable.ic_add),
-                contentDescription = "add"
+                contentDescription = "add", modifier = Modifier.clickable {
+                    showNewTaskElement = !showNewTaskElement
+                }
             )
         }
         Spacer(
@@ -160,7 +166,7 @@ fun MainScreen() {
                                 )
                                 Text(
                                     modifier = Modifier.padding(start = 10.dp),
-                                    text = item.name,
+                                    text = item.name_task,
                                     style = itemStyleText
                                 )
                             }
@@ -202,5 +208,13 @@ fun MainScreen() {
         exit = shrinkVertically()
     ) {
         PopUpPeriod() { showPopUp = !showPopUp }
+    }
+
+    AnimatedVisibility(
+        visible = showNewTaskElement,
+        enter = expandVertically(),
+        exit = shrinkVertically()
+    ) {
+        NewTaskElement()
     }
 }
