@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,18 +23,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sawacorp.mytime.R
 import com.sawacorp.mytime.model.PieChartData
-import com.sawacorp.mytime.ui.theme.Blue80
-import com.sawacorp.mytime.ui.theme.itemStyleText
-import com.sawacorp.mytime.ui.theme.itemStyleTime
-import com.sawacorp.mytime.ui.theme.mainStyle
+import com.sawacorp.mytime.ui.theme.*
 import com.sawacorp.mytime.view.NewTaskElement
 import com.sawacorp.mytime.view.PieChart
 import com.sawacorp.mytime.view.PopUpPeriod
 
 @Composable
-fun MainScreen() {
+fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
 
     var showPopUp by remember {
         mutableStateOf(false)
@@ -41,8 +40,14 @@ fun MainScreen() {
     var showNewTaskElement by remember {
         mutableStateOf(false)
     }
+    var period by remember {
+        mutableStateOf("Сегодня")
+    }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    val listSlice by viewModel.allSlice.observeAsState(listOf())
+    val activeSlice by viewModel.activeSlice.observeAsState(null)
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.background(Purple80)) {
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
@@ -50,36 +55,39 @@ fun MainScreen() {
         )
         Box(modifier = Modifier.size(260.dp), contentAlignment = Alignment.Center) {
             PieChart(
-                pieChartData = PieChartData(
-                    slices = listOf(
-                        PieChartData.Slice(25F, Color.Red.toArgb(), "Color.Red"),
-                        PieChartData.Slice(45F, Color.Green.toArgb(), "Color.Green"),
-                        PieChartData.Slice(20F, Color.Blue.toArgb(), "Color.Blue"),
-                        PieChartData.Slice(20F, Color.Yellow.toArgb(), "Color.Yellow"),
+                pieChartData = PieChartData(slices = listSlice.ifEmpty {
+                    listOf(
+                        PieChartData.Slice(
+                            1F,
+                            Color.Green.toArgb(),
+                            ""
+                        )
                     )
-                )
+                })
             )
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Учеба",
-                    modifier = Modifier.padding(2.dp),
-                    style = mainStyle
-                )
-                Text(
-                    text = "3:30",
-                    modifier = Modifier.padding(2.dp),
-                    style = mainStyle,
-                    fontSize = 34.sp,
-                    fontWeight = FontWeight(500),
-                    lineHeight = 40.sp,
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.ic_pause),
-                    contentDescription = "pause"
-                )
+                if (activeSlice != null) {
+                    Text(
+                        text = activeSlice?.name.toString(),
+                        modifier = Modifier.padding(2.dp),
+                        style = mainStyle
+                    )
+                    Text(
+                        text = activeSlice?.value.toString(),
+                        modifier = Modifier.padding(2.dp),
+                        style = mainStyle,
+                        fontSize = 34.sp,
+                        fontWeight = FontWeight(500),
+                        lineHeight = 40.sp,
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_pause),
+                        contentDescription = "pause"
+                    )
+                }
             }
         }
         Spacer(
@@ -110,7 +118,7 @@ fun MainScreen() {
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "Неделя",
+                        text = period,
                         style = mainStyle,
                         color = Blue80,
                         fontFamily = FontFamily(Font(R.font.gotham_medium)),
@@ -141,12 +149,7 @@ fun MainScreen() {
                     .fillMaxSize()
                     .padding(top = 10.dp)
             ) {
-                listOf(
-                    PieChartData.Slice(25F, Color.Red.toArgb(), "Прогулка"),
-                    PieChartData.Slice(45F, Color.Green.toArgb(), "Работа"),
-                    PieChartData.Slice(20F, Color.Blue.toArgb(), "Забота"),
-                    PieChartData.Slice(20F, Color.Yellow.toArgb(), "Дружба"),
-                ).forEach { item ->
+                listSlice.forEach { item ->
                     item {
                         Row(
                             modifier = Modifier
@@ -192,7 +195,10 @@ fun MainScreen() {
                                     Spacer(modifier = Modifier.width(20.dp))
                                     Image(
                                         painter = painterResource(id = R.drawable.ic_play),
-                                        contentDescription = "play"
+                                        contentDescription = "play",
+                                        modifier = Modifier.clickable {
+                                            viewModel.setActiveSlice(item)
+                                        }
                                     )
                                 }
                             }
@@ -208,7 +214,10 @@ fun MainScreen() {
         enter = expandVertically(),
         exit = shrinkVertically()
     ) {
-        PopUpPeriod() { showPopUp = !showPopUp }
+        PopUpPeriod() { newPeriod ->
+            period = newPeriod
+            showPopUp = !showPopUp
+        }
     }
 
     AnimatedVisibility(
@@ -216,6 +225,9 @@ fun MainScreen() {
         enter = expandVertically(),
         exit = shrinkVertically()
     ) {
-        NewTaskElement() { showNewTaskElement = !showNewTaskElement }
+        NewTaskElement() { nameTask, colorTask ->
+            viewModel.addTask(PieChartData.Slice(1F, colorTask.toArgb(), nameTask))
+            showNewTaskElement = !showNewTaskElement
+        }
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Cyan
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,7 +25,9 @@ import com.sawacorp.mytime.ui.theme.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
-fun NewTaskElement(showPopUp: () -> Unit = {}) {
+fun NewTaskElement(
+    showPopUp: (nameTask: String, colorTask: Color) -> Unit = { _, _ -> }
+) {
 
     var nameTask by remember {
         mutableStateOf("")
@@ -37,6 +40,7 @@ fun NewTaskElement(showPopUp: () -> Unit = {}) {
         mutableStateOf(Color(R.color.black))
     }
     val controller = rememberColorPickerController()
+    val focusManager = LocalFocusManager.current
 
     Box(
         modifier = Modifier
@@ -74,7 +78,9 @@ fun NewTaskElement(showPopUp: () -> Unit = {}) {
                     placeholder = { Text(text = "название") },
                     maxLines = 1,
                     shape = RoundedCornerShape(25.dp),
-                    singleLine = true
+                    singleLine = true,
+                    textStyle = itemStyleText,
+                    colors = TextFieldDefaults.outlinedTextFieldColors(textColor = Black90)
                 )
                 Spacer(
                     Modifier
@@ -82,7 +88,10 @@ fun NewTaskElement(showPopUp: () -> Unit = {}) {
                         .fillMaxWidth()
                 )
                 Button(
-                    onClick = { showColorPicker = !showColorPicker },
+                    onClick = {
+                        focusManager.clearFocus()
+                        showColorPicker = !showColorPicker
+                    },
                     shape = RoundedCornerShape(25.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                     contentPadding = PaddingValues(),
@@ -107,7 +116,7 @@ fun NewTaskElement(showPopUp: () -> Unit = {}) {
                         .fillMaxWidth()
                 )
                 Button(
-                    onClick = { showPopUp() },
+                    onClick = { showPopUp(nameTask, color) },
                     shape = RoundedCornerShape(25.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                     contentPadding = PaddingValues(),
