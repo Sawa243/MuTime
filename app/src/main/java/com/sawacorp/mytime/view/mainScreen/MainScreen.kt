@@ -236,16 +236,20 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                                                 .height(25.dp)
                                                 .width(20.dp)
                                                 .clickable {
-                                                    context.startService(serviceIntent)
+                                                    if(viewModel.activeSlice.value != null) {
+                                                        context.stopService(serviceIntent)
+                                                        viewModel.stopTimer(viewModel.activeSlice.value?.name ?: item.name)
+                                                    }
+
                                                     viewModel.startTimer(item)
                                                     serviceIntent.putExtra(
                                                         TimerService.TIME_EXTRA,
                                                         viewModel.time.value
                                                     )
+                                                    context.startService(serviceIntent)
                                                 }
                                         )
                                     }
-
                                 }
                             }
                         }

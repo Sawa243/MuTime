@@ -64,7 +64,11 @@ class MainScreenViewModel @Inject constructor(
 
     fun stopTimer(nameTask: String) {
         timerStarted.value = false
+        saveNewList(nameTask)
+        activeSlice.value = null
+    }
 
+    private fun saveNewList(nameTask: String) {
         val newList = allSlice.value ?: mutableListOf()
         newList.forEach {
             if (it.name == nameTask) {
@@ -72,14 +76,13 @@ class MainScreenViewModel @Inject constructor(
             }
         }
         insert(newList)
-        activeSlice.value = null
     }
 
     fun startTimer(slice: PieChartData.Slice) =
         viewModelScope.launch(coroutineContext) { // TODO не работает на переключении на новый слайс
             timerStarted.value = true
 
-            activeSlice.value?.name?.let { stopTimer(it) }
+
 
             if (activeSlice.value != slice) {
                 time.value = slice.value.toDouble()
