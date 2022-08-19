@@ -1,5 +1,7 @@
 package com.sawacorp.mytime.view.mainScreen
 
+import android.content.Intent
+import android.content.IntentFilter
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -16,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -26,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sawacorp.mytime.R
 import com.sawacorp.mytime.model.PieChartData
+import com.sawacorp.mytime.service.TimerService
 import com.sawacorp.mytime.ui.theme.*
 import com.sawacorp.mytime.view.NewTaskElement
 import com.sawacorp.mytime.view.PieChart
@@ -44,10 +48,20 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
         mutableStateOf("Сегодня")
     }
 
+    val context = LocalContext.current
+    val serviceIntent by remember {
+        mutableStateOf(Intent(context.applicationContext, TimerService::class.java))
+    }
+    context.registerReceiver(viewModel.updateTime, IntentFilter(TimerService.TIMER_UPDATED))
+
     val listSlice by viewModel.allSlice.observeAsState(listOf())
     val activeSlice by viewModel.activeSlice.observeAsState(null)
+    val activeTime by viewModel.timeInString.observeAsState("")
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.background(Purple80)) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.background(Purple80)
+    ) {
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
@@ -76,7 +90,7 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                         style = mainStyle
                     )
                     Text(
-                        text = activeSlice?.value.toString(),
+                        text = activeTime,
                         modifier = Modifier.padding(2.dp),
                         style = mainStyle,
                         fontSize = 34.sp,
@@ -85,7 +99,10 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                     )
                     Image(
                         painter = painterResource(id = R.drawable.ic_pause),
-                        contentDescription = "pause"
+                        contentDescription = "pause", modifier = Modifier.clickable {
+                            context.stopService(serviceIntent)
+                            viewModel.stopTimer()
+                        }
                     )
                 }
             }
@@ -190,16 +207,42 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                                 ) {
                                     Image(
                                         painter = painterResource(id = R.drawable.ic_change),
-                                        contentDescription = "change"
+                                        contentDescription = "change",
+                                        modifier = Modifier
+                                            .height(25.dp)
+                                            .width(20.dp)
                                     )
                                     Spacer(modifier = Modifier.width(20.dp))
-                                    Image(
-                                        painter = painterResource(id = R.drawable.ic_play),
-                                        contentDescription = "play",
-                                        modifier = Modifier.clickable {
-                                            viewModel.setActiveSlice(item)
-                                        }
-                                    )
+                                    if (item.name == viewModel.activeSlice.value?.name) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.ic_pause),
+                                            contentDescription = "pause",
+                                            modifier = Modifier
+                                                .height(25.dp)
+                                                .width(20.dp)
+                                                .clickable {
+                                                context.stopService(serviceIntent)
+                                                viewModel.stopTimer()
+                                            }
+                                        )
+                                    } else {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.ic_play),
+                                            contentDescription = "play",
+                                            modifier = Modifier
+                                                .height(25.dp)
+                                                .width(20.dp)
+                                                .clickable {
+                                                serviceIntent.putExtra(
+                                                    TimerService.TIME_EXTRA,
+                                                    viewModel.time.value
+                                                )
+                                                context.startService(serviceIntent)
+                                                viewModel.startTimer(item)
+                                            }
+                                        )
+                                    }
+
                                 }
                             }
                         }
@@ -230,4 +273,31 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
             showNewTaskElement = !showNewTaskElement
         }
     }
+
+    /*fun startTimer() {
+        serviceIntent.putExtra(TimerService.TIME_EXTRA, viewModel.time.value)
+        context.startService(serviceIntent)
+        viewModel.timerStarted.value = true
+    }
+
+    fun stopTimer() {
+        context.stopService(serviceIntent)
+        viewModel.timerStarted.value = false
+    }
+
+    fun resetTimer() {
+        stopTimer()
+        with(viewModel) {
+            time.value = 0.0
+            timeInString.value = getTimeStringFromDouble(viewModel.time.value ?: 0.0)
+        }
+    }
+
+    fun startStopTimer() {
+        if (viewModel.timerStarted.value == true)
+            stopTimer()
+        else
+            startTimer()
+    }*/
+
 }
