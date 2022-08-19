@@ -11,9 +11,9 @@ data class PieChartData(val slices: List<Slice>) {
 
     @Entity(tableName = "storage_entity")
     data class Slice(
-        val value: Float,
-        val color: Int,
+        var value: Float,
+        var color: Int,
         @PrimaryKey
-        val name: String
+        var name: String
     )
 }

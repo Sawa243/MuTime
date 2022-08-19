@@ -101,7 +101,7 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                         painter = painterResource(id = R.drawable.ic_pause),
                         contentDescription = "pause", modifier = Modifier.clickable {
                             context.stopService(serviceIntent)
-                            viewModel.stopTimer()
+                            viewModel.stopTimer(activeSlice?.name ?: "")
                         }
                     )
                 }
@@ -197,7 +197,10 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = item.value.toString(),
+                                    text = if (item.name == viewModel.activeSlice.value?.name)
+                                        activeTime else viewModel.getTimeStringFromDouble(
+                                        item.value.toDouble()
+                                    ),
                                     style = itemStyleTime
                                 )
                                 Row(
@@ -221,9 +224,9 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                                                 .height(25.dp)
                                                 .width(20.dp)
                                                 .clickable {
-                                                context.stopService(serviceIntent)
-                                                viewModel.stopTimer()
-                                            }
+                                                    context.stopService(serviceIntent)
+                                                    viewModel.stopTimer(item.name)
+                                                }
                                         )
                                     } else {
                                         Image(
@@ -233,13 +236,13 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                                                 .height(25.dp)
                                                 .width(20.dp)
                                                 .clickable {
-                                                serviceIntent.putExtra(
-                                                    TimerService.TIME_EXTRA,
-                                                    viewModel.time.value
-                                                )
-                                                context.startService(serviceIntent)
-                                                viewModel.startTimer(item)
-                                            }
+                                                    context.startService(serviceIntent)
+                                                    viewModel.startTimer(item)
+                                                    serviceIntent.putExtra(
+                                                        TimerService.TIME_EXTRA,
+                                                        viewModel.time.value
+                                                    )
+                                                }
                                         )
                                     }
 
