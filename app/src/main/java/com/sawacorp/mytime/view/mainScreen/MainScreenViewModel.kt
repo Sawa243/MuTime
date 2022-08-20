@@ -79,15 +79,9 @@ class MainScreenViewModel @Inject constructor(
     }
 
     fun startTimer(slice: PieChartData.Slice) =
-        viewModelScope.launch(coroutineContext) { // TODO не работает на переключении на новый слайс
+        viewModelScope.launch(coroutineContext) {
             timerStarted.value = true
-
-
-
-            if (activeSlice.value != slice) {
-                time.value = slice.value.toDouble()
-            }
-
+            time.value = slice.value.toDouble()
             activeSlice.value = slice
         }
 

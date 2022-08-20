@@ -204,7 +204,7 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                                     style = itemStyleTime
                                 )
                                 Row(
-                                    modifier = Modifier.fillMaxWidth(0.5f),
+                                    modifier = Modifier.width(70.dp),
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.SpaceEvenly
                                 ) {
@@ -236,9 +236,12 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                                                 .height(25.dp)
                                                 .width(20.dp)
                                                 .clickable {
-                                                    if(viewModel.activeSlice.value != null) {
+                                                    if (viewModel.activeSlice.value != null) {
                                                         context.stopService(serviceIntent)
-                                                        viewModel.stopTimer(viewModel.activeSlice.value?.name ?: item.name)
+                                                        viewModel.stopTimer(
+                                                            viewModel.activeSlice.value?.name
+                                                                ?: item.name
+                                                        )
                                                     }
 
                                                     viewModel.startTimer(item)
