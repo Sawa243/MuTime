@@ -31,7 +31,8 @@ import com.sawacorp.mytime.ui.theme.*
 @Preview(showBackground = true)
 @Composable
 fun NewTaskElement(
-    showPopUp: (nameTask: String, colorTask: Color) -> Unit = { _, _ -> }
+    showPopUp: (nameTask: String, colorTask: Color) -> Unit = { _, _ -> },
+    exitPopUp: () -> Unit = {}
 ) {
 
     var nameTask by remember {
@@ -52,6 +53,7 @@ fun NewTaskElement(
             .fillMaxSize()
             .alpha(0.3f)
             .background(colorResource(id = R.color.black))
+            .clickable { exitPopUp() }
     )
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Card(

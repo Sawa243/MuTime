@@ -278,10 +278,10 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
         enter = expandVertically(),
         exit = shrinkVertically()
     ) {
-        NewTaskElement() { nameTask, colorTask ->
+        NewTaskElement({ nameTask, colorTask ->
             viewModel.addTask(PieChartData.Slice(1F, colorTask.toArgb(), nameTask))
             showNewTaskElement = !showNewTaskElement
-        }
+        }, { showNewTaskElement = !showNewTaskElement })
     }
 
     /*fun startTimer() {
