@@ -25,14 +25,17 @@ import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.sawacorp.mytime.R
+import com.sawacorp.mytime.model.PieChartData
 import com.sawacorp.mytime.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 fun NewTaskElement(
+    item: PieChartData.Slice? = null,
     showPopUp: (nameTask: String, colorTask: Color) -> Unit = { _, _ -> },
-    exitPopUp: () -> Unit = {}
+    exitPopUp: () -> Unit = {},
+    deleteTask: () -> Unit = {}
 ) {
 
     var nameTask by remember {
@@ -70,7 +73,7 @@ fun NewTaskElement(
                     .padding(top = 20.dp, bottom = 20.dp)
             ) {
                 Text(
-                    text = "Добавить активность",
+                    text = if (item == null) "Добавить активность" else "Изменить активность",
                     style = mainStyle
                 )
                 Spacer(
@@ -82,7 +85,7 @@ fun NewTaskElement(
                     value = nameTask,
                     onValueChange = { value -> if (value.length <= 25) nameTask = value },
                     modifier = Modifier.padding(start = 10.dp, end = 10.dp),
-                    placeholder = { Text(text = "название") },
+                    placeholder = { Text(text = item?.name ?: "название") },
                     maxLines = 1,
                     shape = RoundedCornerShape(15.dp),
                     singleLine = true,
@@ -194,7 +197,7 @@ fun NewTaskElement(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Добавить задачу",
+                            text = if (item == null) "Добавить задачу" else "Сохранить изменения",
                             style = itemStylePeriod,
                             color = Black,
                         )
@@ -219,6 +222,27 @@ fun NewTaskElement(
                     color = Purple40,
                     textAlign = TextAlign.Center
                 )
+                if (item != null) {
+                    Spacer(
+                        Modifier
+                            .height(10.dp)
+                            .fillMaxWidth()
+                    )
+                    Text(
+                        text = "Удалить активность",
+                        modifier = Modifier
+                            .padding(start = 10.dp, end = 10.dp)
+                            .fillMaxWidth()
+                            .clickable {
+                                focusManager.clearFocus()
+                                deleteTask()
+                            },
+                        style = mainStyle,
+                        fontSize = 14.sp,
+                        color = Color20,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
     }

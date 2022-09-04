@@ -13,6 +13,6 @@ class SliceRepository(dataBase: DataBase) {
     val allSlice: LiveData<List<PieChartData.Slice>> = storageDao.allStorageEntity()
 
     suspend fun insert(sliceList: List<PieChartData.Slice>) {
-        storageDao.insertStorageEntity(sliceList)
+        storageDao.insertWithTransaction(sliceList)
     }
 }

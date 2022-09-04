@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -84,5 +86,25 @@ class MainScreenViewModel @Inject constructor(
             time.value = slice.value.toDouble()
             activeSlice.value = slice
         }
+
+    fun editTask(sliceForEdit: PieChartData.Slice, newNameTask: String, newColorTask: Color) {
+        viewModelScope.launch(coroutineContext) {
+            val slices = allSlice.value?.toMutableList() ?: mutableListOf()
+            slices.removeIf { slice -> slice.name == sliceForEdit.name }
+            slices.add(
+                PieChartData.Slice(sliceForEdit.value, newColorTask.toArgb(),
+                    newNameTask.ifEmpty { sliceForEdit.name })
+            )
+            insert(slices)
+        }
+    }
+
+    fun deleteTask(oldSlice: PieChartData.Slice) {
+        viewModelScope.launch(coroutineContext) {
+            val slices = allSlice.value?.toMutableList() ?: mutableListOf()
+            slices.removeIf { slice -> slice.name == oldSlice.name }
+            insert(slices)
+        }
+    }
 
 }

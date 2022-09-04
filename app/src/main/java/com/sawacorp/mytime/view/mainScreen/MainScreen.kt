@@ -47,6 +47,9 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
     var period by remember {
         mutableStateOf("Сегодня")
     }
+    var sliceForEdit: PieChartData.Slice? by remember {
+        mutableStateOf(null)
+    }
 
     val context = LocalContext.current
     val serviceIntent by remember {
@@ -214,6 +217,10 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                                         modifier = Modifier
                                             .height(25.dp)
                                             .width(20.dp)
+                                            .clickable {
+                                                sliceForEdit = item
+                                                showNewTaskElement = !showNewTaskElement
+                                            }
                                     )
                                     Spacer(modifier = Modifier.width(20.dp))
                                     if (item.name == viewModel.activeSlice.value?.name) {
@@ -278,36 +285,22 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
         enter = expandVertically(),
         exit = shrinkVertically()
     ) {
-        NewTaskElement({ nameTask, colorTask ->
-            viewModel.addTask(PieChartData.Slice(1F, colorTask.toArgb(), nameTask))
-            showNewTaskElement = !showNewTaskElement
-        }, { showNewTaskElement = !showNewTaskElement })
+        NewTaskElement(
+            sliceForEdit,
+            { nameTask, colorTask ->
+                if (sliceForEdit == null) {
+                    viewModel.addTask(PieChartData.Slice(1F, colorTask.toArgb(), nameTask))
+                } else {
+                    sliceForEdit?.let { viewModel.editTask(it, nameTask, colorTask) }
+                    sliceForEdit = null
+                }
+                showNewTaskElement = !showNewTaskElement
+            }, { showNewTaskElement = !showNewTaskElement },
+            {
+                sliceForEdit?.let { viewModel.deleteTask(it) }
+                sliceForEdit = null
+                showNewTaskElement = !showNewTaskElement
+            })
     }
-
-    /*fun startTimer() {
-        serviceIntent.putExtra(TimerService.TIME_EXTRA, viewModel.time.value)
-        context.startService(serviceIntent)
-        viewModel.timerStarted.value = true
-    }
-
-    fun stopTimer() {
-        context.stopService(serviceIntent)
-        viewModel.timerStarted.value = false
-    }
-
-    fun resetTimer() {
-        stopTimer()
-        with(viewModel) {
-            time.value = 0.0
-            timeInString.value = getTimeStringFromDouble(viewModel.time.value ?: 0.0)
-        }
-    }
-
-    fun startStopTimer() {
-        if (viewModel.timerStarted.value == true)
-            stopTimer()
-        else
-            startTimer()
-    }*/
 
 }
