@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sawacorp.mytime.getDateToInt
 import com.sawacorp.mytime.model.PieChartData
 import com.sawacorp.mytime.repository.SliceRepository
 import com.sawacorp.mytime.service.TimerService
@@ -25,6 +26,8 @@ class MainScreenViewModel @Inject constructor(
 
     val allSlice = repository.allSlice
     val activeSlice: MutableLiveData<PieChartData.Slice> = MutableLiveData(null)
+    val period: MutableLiveData<String> = MutableLiveData("Сегодня")
+    val sliceByDate: MutableLiveData<List<PieChartData.Slice>> = MutableLiveData(listOf())
 
     val time = MutableLiveData(0.0)
     val timeInString = MutableLiveData("")
@@ -92,8 +95,11 @@ class MainScreenViewModel @Inject constructor(
             val slices = allSlice.value?.toMutableList() ?: mutableListOf()
             slices.removeIf { slice -> slice.name == sliceForEdit.name }
             slices.add(
-                PieChartData.Slice(sliceForEdit.value, newColorTask.toArgb(),
-                    newNameTask.ifEmpty { sliceForEdit.name })
+                PieChartData.Slice(
+                    newNameTask.ifEmpty { sliceForEdit.name },
+                    sliceForEdit.value, newColorTask.toArgb(),
+                    sliceForEdit.date
+                )
             )
             insert(slices)
         }
@@ -104,6 +110,25 @@ class MainScreenViewModel @Inject constructor(
             val slices = allSlice.value?.toMutableList() ?: mutableListOf()
             slices.removeIf { slice -> slice.name == oldSlice.name }
             insert(slices)
+        }
+    }
+
+    fun setPeriod(newPeriod: String) {
+        viewModelScope.launch(coroutineContext) {
+            period.postValue(newPeriod)
+            sliceByDate.postValue(slicesByDate(newPeriod))
+        }
+    }
+
+    private fun slicesByDate(period: String): List<PieChartData.Slice> {
+        return when (period) {
+            "Сегодня" -> allSlice.value?.filter { slice -> slice.date == getDateToInt() }
+                ?: listOf()
+            "Вчера" -> allSlice.value?.filter { slice -> slice.date <= (getDateToInt() - 1) }
+                ?: listOf()
+            "Неделя" -> allSlice.value?.filter { slice -> slice.date <= (getDateToInt() - 7) }
+                ?: listOf()
+            else -> listOf()
         }
     }
 

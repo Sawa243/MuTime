@@ -11,17 +11,10 @@ data class PieChartData(val slices: List<Slice>) {
 
     @Entity(tableName = "storage_entity")
     data class Slice(
+        @PrimaryKey
+        var name: String,
         var value: Float,
         var color: Int,
-        @PrimaryKey
-        var name: String
+        var date: Int
     )
 }
-
-/*
-fun main() {
-    val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss", Locale.getDefault())
-    val currentDate = sdf.format(Date())
-
-    println(currentDate + Date())
-}*/

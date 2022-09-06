@@ -80,7 +80,7 @@ fun PopUpPeriod(
                         .background(Grey90)
                 )
                 Text(
-                    text = "Завтра",
+                    text = "Вчера",
                     style = itemStylePeriod,
                     modifier = Modifier
                         .fillMaxWidth()

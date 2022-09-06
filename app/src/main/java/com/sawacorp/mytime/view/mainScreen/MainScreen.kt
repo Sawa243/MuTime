@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sawacorp.mytime.R
+import com.sawacorp.mytime.getDateToInt
 import com.sawacorp.mytime.model.PieChartData
 import com.sawacorp.mytime.service.TimerService
 import com.sawacorp.mytime.ui.theme.*
@@ -47,9 +48,8 @@ fun MainScreen(
     var showNewTaskElement by remember {
         mutableStateOf(false)
     }
-    var period by remember {
-        mutableStateOf("Сегодня")
-    }
+    val period by viewModel.period.observeAsState("Сегодня")
+
     var sliceForEdit: PieChartData.Slice? by remember {
         mutableStateOf(null)
     }
@@ -60,7 +60,9 @@ fun MainScreen(
     }
     context.registerReceiver(viewModel.updateTime, IntentFilter(TimerService.TIMER_UPDATED))
 
-    val listSlice by viewModel.allSlice.observeAsState(listOf())
+    val slices by viewModel.allSlice.observeAsState(listOf())
+    val listSlice by viewModel.sliceByDate.observeAsState(listOf())
+
     val activeSlice by viewModel.activeSlice.observeAsState(null)
     val activeTime by viewModel.timeInString.observeAsState("")
 
@@ -83,9 +85,10 @@ fun MainScreen(
                     pieChartData = PieChartData(slices = listSlice.ifEmpty {
                         listOf(
                             PieChartData.Slice(
+                                "",
                                 1F,
                                 Color.Green.toArgb(),
-                                ""
+                                getDateToInt()
                             )
                         )
                     })
@@ -283,7 +286,7 @@ fun MainScreen(
     ) {
         PopUpPeriod(
             { newPeriod ->
-                period = newPeriod
+                viewModel.setPeriod(newPeriod)
                 showPopUp = !showPopUp
             }, {
                 showPopUp = !showPopUp
@@ -300,7 +303,14 @@ fun MainScreen(
             sliceForEdit,
             { nameTask, colorTask ->
                 if (sliceForEdit == null) {
-                    viewModel.addTask(PieChartData.Slice(1F, colorTask.toArgb(), nameTask))
+                    viewModel.addTask(
+                        PieChartData.Slice(
+                            nameTask,
+                            1F,
+                            colorTask.toArgb(),
+                            getDateToInt()
+                        )
+                    )
                 } else {
                     sliceForEdit?.let { viewModel.editTask(it, nameTask, colorTask) }
                     sliceForEdit = null
