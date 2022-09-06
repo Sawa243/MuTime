@@ -12,14 +12,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sawacorp.mytime.R
 import com.sawacorp.mytime.ui.theme.*
 
+@Preview(showBackground = true)
 @Composable
 fun PopUpPeriod(
-    setPeriod: (period: String) -> Unit
+    setPeriod: (period: String) -> Unit = {},
+    dataPicker: () -> Unit = {}
 ) {
     Box(
         modifier = Modifier
@@ -45,8 +48,9 @@ fun PopUpPeriod(
             ) {
                 Text(
                     text = "Период",
-                    style = mainStyle,
+                    style = styleTypeOne,
                     fontSize = 24.sp,
+                    color = Black99,
                     modifier = Modifier.padding(
                         top = 24.dp,
                         bottom = 16.dp
@@ -54,7 +58,7 @@ fun PopUpPeriod(
                 )
                 Text(
                     text = "Задайте период активности",
-                    style = mainStyle,
+                    style = styleTypeOne,
                     fontSize = 14.sp,
                     modifier = Modifier.padding(bottom = 24.dp),
                     color = Grey60
@@ -82,7 +86,7 @@ fun PopUpPeriod(
                         .fillMaxWidth()
                         .padding(vertical = 20.dp)
                         .clickable {
-                            setPeriod("Завтра")
+                            setPeriod("Вчера")
                         }
                 )
                 Spacer(
@@ -114,7 +118,7 @@ fun PopUpPeriod(
                         .fillMaxWidth()
                         .padding(vertical = 20.dp)
                         .clickable {
-                            setPeriod("период")
+                            dataPicker()
                         }
                 )
             }

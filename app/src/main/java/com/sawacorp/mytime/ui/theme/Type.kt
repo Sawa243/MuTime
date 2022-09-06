@@ -10,7 +10,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.sawacorp.mytime.R
 
-// Set of Material typography styles to start with
 val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
@@ -29,26 +28,36 @@ val Typography = Typography(
         fontWeight = FontWeight(500),
         letterSpacing = 0.1.sp
     )
-/*
-Other default text styles to override
-    labelSmall = TextStyle(
-    fontFamily = FontFamily.Default,
-    fontWeight = FontWeight.Medium,
-    fontSize = 11.sp,
-    lineHeight = 16.sp,
-    letterSpacing = 0.5.sp
-)
-*/
 )
 
-val mainStyle = TextStyle(
+val styleTypeOne = TextStyle(
     fontSize = 18.sp,
     color = Black80,
     lineHeight = 21.sp,
-    fontFamily = FontFamily(Font(R.font.gotham)),
+    fontFamily = FontFamily(Font(R.font.gotham_medium)),
     textAlign = TextAlign.Center,
     fontStyle = FontStyle.Normal,
     fontWeight = FontWeight(500),
+    letterSpacing = 0.1.sp
+)
+val styleTypeTwo = TextStyle(
+    fontSize = 34.sp,
+    color = Black80,
+    lineHeight = 40.sp,
+    fontFamily = FontFamily(Font(R.font.gotham)),
+    textAlign = TextAlign.Center,
+    fontStyle = FontStyle.Normal,
+    fontWeight = FontWeight(700),
+    letterSpacing = 0.1.sp
+)
+val styleTypeThree = TextStyle(
+    fontSize = 18.sp,
+    color = Black80,
+    lineHeight = 21.sp,
+    fontFamily = FontFamily(Font(R.font.gotham_bold)),
+    textAlign = TextAlign.Center,
+    fontStyle = FontStyle.Normal,
+    fontWeight = FontWeight(700),
     letterSpacing = 0.1.sp
 )
 

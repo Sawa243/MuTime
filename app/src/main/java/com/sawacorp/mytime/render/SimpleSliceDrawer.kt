@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.sawacorp.mytime.model.PieChartData
 
-class SimpleSliceDrawer(private val sliceThickness: Float = 25F) : ISliceDrawer {
+class SimpleSliceDrawer(private val sliceThickness: Float = 15F) : ISliceDrawer {
 
     init {
         require(sliceThickness in 10F..100F) {

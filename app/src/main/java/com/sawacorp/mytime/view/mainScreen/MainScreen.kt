@@ -10,6 +10,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -22,7 +24,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,7 +37,9 @@ import com.sawacorp.mytime.view.PieChart
 import com.sawacorp.mytime.view.PopUpPeriod
 
 @Composable
-fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
+fun MainScreen(
+    viewModel: MainScreenViewModel = viewModel()
+) {
 
     var showPopUp by remember {
         mutableStateOf(false)
@@ -63,7 +66,7 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.background(Purple80)
+        modifier = Modifier.background(Main)
     ) {
         Spacer(
             modifier = Modifier
@@ -71,17 +74,23 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                 .height(70.dp)
         )
         Box(modifier = Modifier.size(260.dp), contentAlignment = Alignment.Center) {
-            PieChart(
-                pieChartData = PieChartData(slices = listSlice.ifEmpty {
-                    listOf(
-                        PieChartData.Slice(
-                            1F,
-                            Color.Green.toArgb(),
-                            ""
+            Card(
+                shape = CircleShape,
+                contentColor = Color.White
+            ) {
+                PieChart(
+                    modifier = Modifier.padding(15.dp),
+                    pieChartData = PieChartData(slices = listSlice.ifEmpty {
+                        listOf(
+                            PieChartData.Slice(
+                                1F,
+                                Color.Green.toArgb(),
+                                ""
+                            )
                         )
-                    )
-                })
-            )
+                    })
+                )
+            }
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -90,15 +99,12 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                     Text(
                         text = activeSlice?.name.toString(),
                         modifier = Modifier.padding(2.dp),
-                        style = mainStyle
+                        style = styleTypeOne
                     )
                     Text(
                         text = activeTime,
                         modifier = Modifier.padding(2.dp),
-                        style = mainStyle,
-                        fontSize = 34.sp,
-                        fontWeight = FontWeight(500),
-                        lineHeight = 40.sp,
+                        style = styleTypeTwo,
                     )
                     Image(
                         painter = painterResource(id = R.drawable.ic_pause),
@@ -123,7 +129,7 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
             Column(horizontalAlignment = Alignment.Start) {
                 Text(
                     text = "Мои Активности",
-                    style = mainStyle
+                    style = styleTypeThree
                 )
                 Spacer(modifier = Modifier.height(18.dp))
                 Row(
@@ -139,7 +145,7 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = period,
-                        style = mainStyle,
+                        style = styleTypeOne,
                         color = Blue80,
                         fontFamily = FontFamily(Font(R.font.gotham_medium)),
                         lineHeight = 19.sp,
@@ -161,8 +167,9 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
         )
         Card(
             modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
+                .fillMaxSize(),
+            shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
+            contentColor = Color.White
         ) {
             LazyColumn(
                 modifier = Modifier
@@ -274,10 +281,14 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
         enter = expandVertically(),
         exit = shrinkVertically()
     ) {
-        PopUpPeriod() { newPeriod ->
-            period = newPeriod
-            showPopUp = !showPopUp
-        }
+        PopUpPeriod(
+            { newPeriod ->
+                period = newPeriod
+                showPopUp = !showPopUp
+            }, {
+                showPopUp = !showPopUp
+            }
+        )
     }
 
     AnimatedVisibility(

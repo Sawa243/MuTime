@@ -17,3 +17,11 @@ data class PieChartData(val slices: List<Slice>) {
         var name: String
     )
 }
+
+/*
+fun main() {
+    val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss", Locale.getDefault())
+    val currentDate = sdf.format(Date())
+
+    println(currentDate + Date())
+}*/

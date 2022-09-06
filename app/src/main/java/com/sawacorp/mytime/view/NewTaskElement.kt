@@ -17,6 +17,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -74,7 +79,16 @@ fun NewTaskElement(
             ) {
                 Text(
                     text = if (item == null) "Добавить активность" else "Изменить активность",
-                    style = mainStyle
+                    style = TextStyle(
+                        fontSize = 20.sp,
+                        color = Black99,
+                        lineHeight = 24.sp,
+                        fontFamily = FontFamily(Font(R.font.gotham_medium)),
+                        textAlign = TextAlign.Center,
+                        fontStyle = FontStyle.Normal,
+                        fontWeight = FontWeight(500),
+                        letterSpacing = 0.1.sp
+                    )
                 )
                 Spacer(
                     Modifier
@@ -102,7 +116,7 @@ fun NewTaskElement(
                     modifier = Modifier
                         .padding(start = 10.dp, end = 10.dp)
                         .fillMaxWidth(),
-                    style = mainStyle,
+                    style = styleTypeOne,
                     fontSize = 14.sp,
                     color = Grey60,
                     textAlign = TextAlign.Start
@@ -217,7 +231,7 @@ fun NewTaskElement(
                             focusManager.clearFocus()
                             showColorPicker = !showColorPicker
                         },
-                    style = mainStyle,
+                    style = styleTypeOne,
                     fontSize = 14.sp,
                     color = Purple40,
                     textAlign = TextAlign.Center
@@ -237,7 +251,7 @@ fun NewTaskElement(
                                 focusManager.clearFocus()
                                 deleteTask()
                             },
-                        style = mainStyle,
+                        style = styleTypeOne,
                         fontSize = 14.sp,
                         color = Color20,
                         textAlign = TextAlign.Center
