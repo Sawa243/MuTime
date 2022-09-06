@@ -24,7 +24,8 @@ class MainScreenViewModel @Inject constructor(
     private val repository: SliceRepository
 ) : ViewModel() {
 
-    val allSlice = repository.allSlice
+    var allSlice = repository.allSlice
+
     val activeSlice: MutableLiveData<PieChartData.Slice> = MutableLiveData(null)
     val period: MutableLiveData<String> = MutableLiveData("Сегодня")
     val sliceByDate: MutableLiveData<List<PieChartData.Slice>> = MutableLiveData(listOf())
