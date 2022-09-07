@@ -125,9 +125,9 @@ class MainScreenViewModel @Inject constructor(
         return when (period) {
             "Сегодня" -> allSlice.value?.filter { slice -> slice.date == getDateToInt() }
                 ?: listOf()
-            "Вчера" -> allSlice.value?.filter { slice -> slice.date <= (getDateToInt() - 1) }
+            "Вчера" -> allSlice.value?.filter { slice -> slice.date >= (getDateToInt() - 1) }
                 ?: listOf()
-            "Неделя" -> allSlice.value?.filter { slice -> slice.date <= (getDateToInt() - 7) }
+            "Неделя" -> allSlice.value?.filter { slice -> slice.date >= (getDateToInt() - 7) }
                 ?: listOf()
             else -> listOf()
         }
