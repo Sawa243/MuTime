@@ -67,8 +67,7 @@ fun PopUpPeriod(
                     text = "Сегодня",
                     style = itemStylePeriod,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 20.dp)
+                        .size(height = 40.dp, width = 150.dp)
                         .clickable {
                             setPeriod("Сегодня")
                         }
@@ -83,8 +82,8 @@ fun PopUpPeriod(
                     text = "Вчера",
                     style = itemStylePeriod,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 20.dp)
+                        .padding(top = 20.dp)
+                        .size(height = 40.dp, width = 150.dp)
                         .clickable {
                             setPeriod("Вчера")
                         }
@@ -99,8 +98,8 @@ fun PopUpPeriod(
                     text = "Неделя",
                     style = itemStylePeriod,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 20.dp)
+                        .padding(top = 20.dp)
+                        .size(height = 40.dp, width = 150.dp)
                         .clickable {
                             setPeriod("Неделя")
                         }
@@ -111,16 +110,16 @@ fun PopUpPeriod(
                         .width(230.dp)
                         .background(Grey90)
                 )
-                Text(
+                /*Text(
                     text = "Задать период",
                     style = itemStylePeriod,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 20.dp)
+                        .padding(top = 20.dp)
+                        .size(height = 40.dp, width = 150.dp)
                         .clickable {
                             dataPicker()
                         }
-                )
+                )*/
             }
         }
     }

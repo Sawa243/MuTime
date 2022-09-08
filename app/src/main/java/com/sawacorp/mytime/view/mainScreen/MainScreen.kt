@@ -88,10 +88,10 @@ fun MainScreen(
                     pieChartData = PieChartData(slices = listSlice.ifEmpty {
                         listOf(
                             PieChartData.Slice(
-                                "",
-                                1F,
-                                Color.Green.toArgb(),
-                                getDateToInt()
+                                name = "",
+                                value = 0F,
+                                color = Color.Green.toArgb(),
+                                date = getDateToInt()
                             )
                         )
                     })
@@ -116,7 +116,7 @@ fun MainScreen(
                         painter = painterResource(id = R.drawable.ic_pause),
                         contentDescription = "pause", modifier = Modifier.clickable {
                             context.stopService(serviceIntent)
-                            viewModel.stopTimer(activeSlice?.name ?: "")
+                            viewModel.stopTimer(activeSlice?.id ?: 0)
                         }
                     )
                 }
@@ -213,7 +213,7 @@ fun MainScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = if (item.name == viewModel.activeSlice.value?.name)
+                                    text = if (item.id == viewModel.activeSlice.value?.id)
                                         activeTime else viewModel.getTimeStringFromDouble(
                                         item.value.toDouble()
                                     ),
@@ -236,7 +236,7 @@ fun MainScreen(
                                             }
                                     )
                                     Spacer(modifier = Modifier.width(20.dp))
-                                    if (item.name == viewModel.activeSlice.value?.name) {
+                                    if (item.id == viewModel.activeSlice.value?.id) {
                                         Image(
                                             painter = painterResource(id = R.drawable.ic_pause),
                                             contentDescription = "pause",
@@ -245,7 +245,7 @@ fun MainScreen(
                                                 .width(20.dp)
                                                 .clickable {
                                                     context.stopService(serviceIntent)
-                                                    viewModel.stopTimer(item.name)
+                                                    viewModel.stopTimer(item.id)
                                                 }
                                         )
                                     } else {
@@ -259,8 +259,8 @@ fun MainScreen(
                                                     if (viewModel.activeSlice.value != null) {
                                                         context.stopService(serviceIntent)
                                                         viewModel.stopTimer(
-                                                            viewModel.activeSlice.value?.name
-                                                                ?: item.name
+                                                            viewModel.activeSlice.value?.id
+                                                                ?: item.id
                                                         )
                                                     }
 
@@ -308,10 +308,10 @@ fun MainScreen(
                 if (sliceForEdit == null) {
                     viewModel.addTask(
                         PieChartData.Slice(
-                            nameTask,
-                            1F,
-                            colorTask.toArgb(),
-                            getDateToInt()
+                            name = nameTask,
+                            value = 0F,
+                            color = colorTask.toArgb(),
+                            date = getDateToInt()
                         )
                     )
                 } else {

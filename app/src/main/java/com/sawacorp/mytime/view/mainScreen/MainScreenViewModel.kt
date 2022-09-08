@@ -68,16 +68,16 @@ class MainScreenViewModel @Inject constructor(
         return makeTimeString(hours, minutes, seconds)
     }
 
-    fun stopTimer(nameTask: String) {
+    fun stopTimer(idTask: Int) {
         timerStarted.value = false
-        saveNewList(nameTask)
+        saveNewList(idTask)
         activeSlice.value = null
     }
 
-    private fun saveNewList(nameTask: String) {
+    private fun saveNewList(idTask: Int) {
         val newList = allSlice.value ?: mutableListOf()
         newList.forEach {
-            if (it.name == nameTask) {
+            if (it.id == idTask) {
                 it.value = time.value?.toFloat() ?: 0f
             }
         }
@@ -94,12 +94,12 @@ class MainScreenViewModel @Inject constructor(
     fun editTask(sliceForEdit: PieChartData.Slice, newNameTask: String, newColorTask: Color) {
         viewModelScope.launch(coroutineContext) {
             val slices = allSlice.value?.toMutableList() ?: mutableListOf()
-            slices.removeIf { slice -> slice.name == sliceForEdit.name }
+            slices.removeIf { slice -> slice.id == sliceForEdit.id }
             slices.add(
                 PieChartData.Slice(
-                    newNameTask.ifEmpty { sliceForEdit.name },
-                    sliceForEdit.value, newColorTask.toArgb(),
-                    sliceForEdit.date
+                    name = newNameTask.ifEmpty { sliceForEdit.name },
+                    value = sliceForEdit.value, color = newColorTask.toArgb(),
+                    date = sliceForEdit.date
                 )
             )
             insert(slices)
@@ -109,7 +109,7 @@ class MainScreenViewModel @Inject constructor(
     fun deleteTask(oldSlice: PieChartData.Slice) {
         viewModelScope.launch(coroutineContext) {
             val slices = allSlice.value?.toMutableList() ?: mutableListOf()
-            slices.removeIf { slice -> slice.name == oldSlice.name }
+            slices.removeIf { slice -> slice.id == oldSlice.id }
             insert(slices)
         }
     }
@@ -124,13 +124,41 @@ class MainScreenViewModel @Inject constructor(
     private fun slicesByDate(period: String): List<PieChartData.Slice> {
         return when (period) {
             "Сегодня" -> allSlice.value?.filter { slice -> slice.date == getDateToInt() }
+                ?.toMutableList()
                 ?: listOf()
-            "Вчера" -> allSlice.value?.filter { slice -> slice.date >= (getDateToInt() - 1) }
-                ?: listOf()
-            "Неделя" -> allSlice.value?.filter { slice -> slice.date >= (getDateToInt() - 7) }
-                ?: listOf()
+            "Вчера" -> {
+                sumSlices(
+                    allSlice.value?.filter { slice -> slice.date >= (getDateToInt() - 1) }
+                        ?.toMutableList()
+                        ?: listOf()
+                )
+            }
+            "Неделя" -> {
+                sumSlices(
+                    allSlice.value?.filter { slice -> slice.date >= (getDateToInt() - 7) }
+                        ?.toMutableList()
+                        ?: listOf()
+                )
+            }
             else -> listOf()
         }
+    }
+
+    private fun sumSlices(listSliceForPeriod: List<PieChartData.Slice>): MutableList<PieChartData.Slice> {
+        val newList = mutableListOf<PieChartData.Slice>()
+        listSliceForPeriod.forEach { tmpSlice ->
+            if (newList.isEmpty()) newList.add(tmpSlice.copy())
+            else if (newList.find { it.name == tmpSlice.name } != null) {
+                newList.forEach { slice ->
+                    if (slice.name == tmpSlice.name) {
+                        slice.value = slice.value + tmpSlice.value
+                    }
+                }
+            } else {
+                newList.add(tmpSlice.copy())
+            }
+        }
+        return newList
     }
 
 }
